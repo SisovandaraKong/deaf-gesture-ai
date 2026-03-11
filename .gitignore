@@ -1,0 +1,60 @@
+# ── Virtual Environment ────────────────────────────────────────────────────────
+venv/
+env/
+.env/
+.venv/
+
+# ── Python Cache ───────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# ── Dataset Images (large, not tracked in git) ────────────────────────────────
+dataset/
+dataset_new/
+
+# ── Generated / Downloaded Model Files ────────────────────────────────────────
+sign_language_model.h5
+hand_landmarker.task
+landmarks_data.pkl
+label_encoder.pkl
+
+# ── Training Outputs ──────────────────────────────────────────────────────────
+training_results.png
+
+# ── Temporary Audio Files (gTTS) ──────────────────────────────────────────────
+*.mp3
+tmp*.mp3
+
+# ── Jupyter Notebook ──────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── IDE / Editor ──────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS Files ──────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Build / Distribution ──────────────────────────────────────────────────────
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ── Test / Coverage ───────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
