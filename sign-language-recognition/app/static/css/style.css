@@ -1,0 +1,421 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   style.css  —  Dark navy theme for Sign Language Recognition
+   Background: #12121C  |  Accent green: #00DC82  |  Accent blue: #4A90E2
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Khmer font — loaded from local static/fonts/ ───────────────────────── */
+@font-face {
+    font-family: "KhmerOS";
+    src: url("/static/fonts/KhmerOS.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ── CSS custom properties ────────────────────────────────────────────────── */
+:root {
+    --bg:            #12121C;
+    --bg-card:       #1A1A2E;
+    --bg-card-hover: #20203A;
+    --border:        #2A2A45;
+    --border-bright: #3A3A60;
+
+    --green:         #00DC82;
+    --green-glow:    rgba(0, 220, 130, 0.18);
+    --green-dark:    #009A5B;
+
+    --blue:          #4A90E2;
+    --blue-glow:     rgba(74, 144, 226, 0.18);
+
+    --orange:        #F59E0B;
+    --orange-glow:   rgba(245, 158, 11, 0.15);
+
+    --red:           #EF4444;
+    --red-glow:      rgba(239, 68, 68, 0.15);
+
+    --text:          #E2E8F0;
+    --text-dim:      #94A3B8;
+    --text-muted:    #4A5568;
+
+    --radius:        12px;
+    --radius-sm:     8px;
+    --topbar-h:      60px;
+}
+
+/* ── Reset & base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* ── Top bar ──────────────────────────────────────────────────────────────── */
+.top-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--topbar-h);
+    background: rgba(10, 10, 20, 0.96);
+    border-bottom: 2px solid var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+}
+
+.top-bar__left  { display: flex; align-items: center; gap: 12px; }
+.top-bar__icon  { font-size: 1.4rem; }
+.top-bar__title { font-size: 1.1rem; font-weight: 700; color: var(--green); letter-spacing: 0.04em; }
+.top-bar__hint  { font-size: 0.75rem; color: var(--text-muted); }
+
+.top-bar__right { display: none; }
+@media (min-width: 960px) { .top-bar__right { display: block; } }
+
+/* ── Live badge ───────────────────────────────────────────────────────────── */
+.badge--live {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    background: var(--green-glow);
+    border: 1px solid var(--green);
+    color: var(--green);
+    animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.55; }
+}
+
+/* ── Keyboard hint chips ──────────────────────────────────────────────────── */
+kbd {
+    display: inline-block;
+    padding: 1px 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-bright);
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-family: monospace;
+    color: var(--text-dim);
+}
+
+/* ── Main two-column layout ───────────────────────────────────────────────── */
+.main-layout {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 16px;
+    padding: calc(var(--topbar-h) + 16px) 16px 16px;
+    height: 100vh;
+}
+
+/* ── Video feed container ─────────────────────────────────────────────────── */
+.video-container {
+    position: relative;
+    background: #06060F;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.video-container.active {
+    border-color: var(--green);
+    box-shadow: 0 0 24px var(--green-glow);
+}
+
+#video-feed {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Translucent overlay shown while camera initializes */
+.video-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(6, 6, 15, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    transition: opacity 0.5s ease;
+}
+
+.video-overlay.hidden { opacity: 0; pointer-events: none; }
+
+.video-overlay__spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border-bright);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+}
+
+/* ── Sidebar ──────────────────────────────────────────────────────────────── */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── Cards ────────────────────────────────────────────────────────────────── */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+}
+
+.card__label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+/* Sign card — green border */
+.card--sign  { border-color: var(--green); }
+/* Sentence card — blue border */
+.card--sentence { border-color: var(--blue); }
+/* Khmer card — orange border */
+.card--khmer    { border-color: var(--orange); }
+/* Status card — subtle */
+.card--status   { border-color: rgba(245, 158, 11, 0.25); background: var(--orange-glow); }
+
+/* ── Detected sign display ────────────────────────────────────────────────── */
+.sign-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.sign-text {
+    font-size: 3.2rem;
+    font-weight: 900;
+    color: var(--green);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    transition: color 0.2s, transform 0.15s;
+}
+
+.sign-text.flash {
+    animation: signFlash 0.35s ease;
+}
+
+@keyframes signFlash {
+    0%   { transform: scale(1);    color: var(--green); }
+    40%  { transform: scale(1.18); color: #fff; }
+    100% { transform: scale(1);    color: var(--green); }
+}
+
+/* ── Hold-progress SVG circle ─────────────────────────────────────────────── */
+.hold-circle-wrap {
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 6px var(--green-glow));
+}
+
+.hold-svg { transform: rotate(-90deg); }   /* start arc at 12 o'clock */
+
+.hold-svg__bg {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 3;
+}
+
+.hold-svg__progress {
+    fill: none;
+    stroke: var(--green);
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.12s linear;
+}
+
+/* ── Confidence bar ───────────────────────────────────────────────────────── */
+.confidence__track {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.confidence__fill {
+    height: 100%;
+    width: 0%;
+    background: var(--green);
+    border-radius: 4px;
+    transition: width 0.25s ease, background-color 0.3s ease;
+}
+
+.confidence__labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+}
+
+#confidence-text { font-weight: 700; color: var(--text); }
+
+/* ── English sentence ─────────────────────────────────────────────────────── */
+.sentence-text {
+    font-size: 1rem;
+    color: #C4D4F5;
+    word-break: break-word;
+    min-height: 1.4rem;
+}
+
+/* ── Khmer translation ────────────────────────────────────────────────────── */
+.khmer-text {
+    font-family: "KhmerOS", sans-serif;
+    font-size: 1.15rem;
+    color: #F5C879;
+    line-height: 1.7;
+    word-break: break-word;
+    min-height: 1.7rem;
+}
+
+/* ── Status message ───────────────────────────────────────────────────────── */
+.status-text {
+    font-size: 0.88rem;
+    color: var(--orange);
+    font-style: italic;
+}
+
+/* ── Control buttons ──────────────────────────────────────────────────────── */
+.btn-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.btn {
+    padding: 13px 10px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s, opacity 0.2s;
+    letter-spacing: 0.03em;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Speak Khmer — green */
+.btn--km {
+    background: var(--green);
+    color: #07180F;
+}
+.btn--km:hover:not(:disabled) {
+    background: #00F090;
+    box-shadow: 0 0 14px var(--green-glow);
+}
+
+/* Speak English — blue */
+.btn--en {
+    background: var(--blue);
+    color: #fff;
+}
+.btn--en:hover:not(:disabled) {
+    background: #62A3F0;
+    box-shadow: 0 0 14px var(--blue-glow);
+}
+
+/* Clear — full-width red ghost button */
+.btn--clear {
+    grid-column: span 2;
+    background: var(--red-glow);
+    color: var(--red);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+}
+.btn--clear:hover {
+    background: rgba(239, 68, 68, 0.22);
+}
+
+/* ── TTS loading overlay ──────────────────────────────────────────────────── */
+.loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 6, 15, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-overlay.visible { display: flex; }
+
+.loading-overlay__box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius);
+    padding: 32px 48px;
+    text-align: center;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+}
+
+.spinner {
+    width: 48px; height: 48px;
+    border: 4px solid var(--border-bright);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 14px;
+}
+
+.spinner-text {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Responsive — stack on small screens ─────────────────────────────────── */
+@media (max-width: 880px) {
+    html, body { overflow: auto; }
+
+    .main-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        height: auto;
+    }
+
+    .video-container {
+        height: 55vw;
+        min-height: 260px;
+    }
+
+    .sidebar { overflow-y: visible; }
+}

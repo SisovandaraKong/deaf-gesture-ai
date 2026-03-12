@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Language Recognition{% endblock %}
+
+{% block body %}
+
+<!-- ── Top Bar ─────────────────────────────────────────────────────────────── -->
+<header class="top-bar">
+    <div class="top-bar__left">
+        <span class="top-bar__icon">✋</span>
+        <h1 class="top-bar__title">Sign Language Recognition</h1>
+        <span class="badge badge--live">● LIVE</span>
+    </div>
+    <div class="top-bar__right">
+        <span class="top-bar__hint">Press <kbd>Space</kbd> Speak KM &nbsp;|&nbsp;
+            <kbd>E</kbd> Speak EN &nbsp;|&nbsp; <kbd>C</kbd> Clear</span>
+    </div>
+</header>
+
+<!-- ── Main Layout ─────────────────────────────────────────────────────────── -->
+<main class="main-layout">
+
+    <!-- Webcam Feed -->
+    <section class="video-container" id="video-container">
+        <img
+            id="video-feed"
+            src="{{ url_for('main.video_feed') }}"
+            alt="Webcam feed with hand landmarks"
+        />
+        <div class="video-overlay" id="video-overlay">
+            <div class="video-overlay__spinner"></div>
+            <p>Connecting to camera…</p>
+        </div>
+    </section>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <!-- ── Detected Sign Card ────────────────────────────────────────── -->
+        <div class="card card--sign">
+            <div class="card__label">Detected Sign</div>
+
+            <div class="sign-display">
+                <!-- Large sign letter / word -->
+                <div id="current-sign" class="sign-text">...</div>
+
+                <!-- Hold-progress SVG circle (r=20 → circumference ≈ 125.66) -->
+                <div class="hold-circle-wrap" title="Hold progress">
+                    <svg class="hold-svg" viewBox="0 0 52 52" width="52" height="52">
+                        <circle class="hold-svg__bg" cx="26" cy="26" r="20"/>
+                        <circle
+                            id="hold-circle"
+                            class="hold-svg__progress"
+                            cx="26" cy="26" r="20"
+                            style="stroke-dasharray:125.66;stroke-dashoffset:125.66;"
+                        />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Confidence bar -->
+            <div class="confidence">
+                <div class="confidence__track">
+                    <div id="confidence-fill" class="confidence__fill"></div>
+                </div>
+                <div class="confidence__labels">
+                    <span>Confidence</span>
+                    <span id="confidence-text">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── English Sentence Card ──────────────────────────────────────── -->
+        <div class="card card--sentence">
+            <div class="card__label">English Sentence</div>
+            <div id="sentence-text" class="sentence-text">(empty)</div>
+        </div>
+
+        <!-- ── Khmer Translation Card ─────────────────────────────────────── -->
+        <div class="card card--khmer">
+            <div class="card__label">Khmer Translation</div>
+            <div id="khmer-text" class="khmer-text">(will appear after sign)</div>
+        </div>
+
+        <!-- ── Status Card ────────────────────────────────────────────────── -->
+        <div class="card card--status">
+            <div id="status-message" class="status-text">Show your hand to start</div>
+        </div>
+
+        <!-- ── Controls ───────────────────────────────────────────────────── -->
+        <div class="btn-group">
+            <button id="btn-speak-km" class="btn btn--km speak-btn">
+                🔊 Speak Khmer
+            </button>
+            <button id="btn-speak-en" class="btn btn--en speak-btn">
+                🔊 Speak English
+            </button>
+            <button id="btn-clear" class="btn btn--clear">
+                🗑 Clear Sentence
+            </button>
+        </div>
+
+    </aside>
+</main>
+
+<!-- ── Global Loading Spinner (shown during TTS generation) ────────────────── -->
+<div id="loading-spinner" class="loading-overlay" aria-hidden="true">
+    <div class="loading-overlay__box">
+        <div class="spinner"></div>
+        <p class="spinner-text">Generating speech…</p>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}
